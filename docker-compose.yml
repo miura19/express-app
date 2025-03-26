@@ -1,0 +1,29 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - "/app/node_modules" # ←追加
+      - .:/app
+    depends_on:
+      - mysql
+  mysql:
+    # MySQL コンテナに使用するイメージを指定
+    image: mysql:8.0
+    # コンテナ内で使用される環境変数を定義
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      # 名前付きボリュームを MySQL コンテナに紐づける
+      - mysqldata:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      # - ./docker/mysql/sql:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+volumes:
+  # 名前付きボリュームの作成
+  mysqldata:
