@@ -16,19 +16,19 @@ const connectionDb = () => {
         host: 'mysql',
         user: 'user',
         password: 'password',
-        database: 'express-docker-db'
+        database: 'express-db'
     });
     con.connect((err) => {
         if (err) {
             console.error('❌ MySQL connection failed. Retrying in 5 seconds...', err);
-            setTimeout(connectionDb, 100);
+            setTimeout(connectionDb, 1000);
         } else {
             console.log('✅ Connected to MySQL');
             global.db = con; // グローバルでDB接続を保持
         }
     });
 }
-setTimeout(connectionDb, 500);
+setTimeout(connectionDb, 1000);
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
