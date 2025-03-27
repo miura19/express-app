@@ -21,14 +21,14 @@ const connectionDb = () => {
     con.connect((err) => {
         if (err) {
             console.error('❌ MySQL connection failed. Retrying in 5 seconds...', err);
-            setTimeout(connectionDb, 1000);
+            setTimeout(connectionDb, 2000);
         } else {
             console.log('✅ Connected to MySQL');
             global.db = con; // グローバルでDB接続を保持
         }
     });
 }
-setTimeout(connectionDb, 1000);
+setTimeout(connectionDb, 2000);
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
