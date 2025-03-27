@@ -1,6 +1,8 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile  # Dockerfile のパスを明示的に指定
     ports:
       - "3000:3000"
     volumes:
@@ -8,6 +10,16 @@ services:
       - .:/app
     depends_on:
       - mysql
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/front/Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/vue-express:/app
+    environment:
+      - NODE_ENV=development
   mysql:
     # MySQL コンテナに使用するイメージを指定
     image: mysql:8.0
