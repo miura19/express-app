@@ -8,6 +8,6 @@ import { ref, onMounted } from 'vue';
 
 <template>
 	<main>
-		LoginView.vue
+		<h1 class=" bg-slate-600">LoginView.vue</h1>
 	</main>
 </template>
