@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { RouterLink, RouterView } from 'vue-router'
 
 
 </script>
@@ -8,8 +9,13 @@ import { ref, onMounted } from 'vue';
 	<main>
 		<div class="bg-gray-100 min-h-screen flex items-center justify-center">
 			<div class="bg-white p-8 rounded-lg shadow-lg w-2/5">
-				<h2 class="text-2xl font-bold mb-6 text-center text-gray-800">ログイン</h2>
+				<h2 class="text-2xl font-bold mb-6 text-center text-gray-800">ユーザー登録</h2>
 				<form action="#" method="POST">
+					<div class="mb-4">
+						<label for="text" class="block text-sm font-medium text-gray-700">名前</label>
+						<input type="text" id="text" name="text" placeholder="田中太郎" required
+							class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+					</div>
 					<div class="mb-4">
 						<label for="email" class="block text-sm font-medium text-gray-700">メールアドレス</label>
 						<input type="email" id="email" name="email" placeholder="your@example.com" required
@@ -22,19 +28,12 @@ import { ref, onMounted } from 'vue';
 								class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
 						</div>
 					</div>
-					<div class="flex items-center justify-between mb-4">
-						<div class="flex items-center">
-							<input type="checkbox" id="remember" name="remember"
-								class="h-4 w-4 text-blue-600 border-gray-300 rounded">
-							<label for="remember" class="ml-2 block text-sm text-gray-900">ログイン状態を保持</label>
-						</div>
-					</div>
 					<button type="submit"
 						class="w-full bg-sky-500 text-white py-2 px-4 rounded-md shadow hover:bg-sky-600">
-						ログイン
+						登録
 					</button>
 				</form>
-				<p class="mt-4 text-cyan-800 underline"><RouterLink to="/register">新規ユーザー登録はこちら</RouterLink></p>
+				<p class="mt-4 text-cyan-800 underline"><RouterLink to="/login">登録済みの方はこちらからログイン</RouterLink></p>
 			</div>
 		</div>
 	</main>
