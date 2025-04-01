@@ -15,16 +15,17 @@ router.get("/", (req, res) => {
     });
 });
 
-router.post("/", (req, res) => {
+router.get("/check-email", (req, res) => {
     const con = getConnection()
-    const query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
-    con.query(query, [req.body.name, req.body.email, req.body.password], (error) => {
+    const email = req.query.email;
+    const query = "SELECT * FROM users WHERE email = ?";
+    con.query(query, [email], (error, results) => {
         if (error) {
-            console.error("Error insert values:", error);
+            console.error("Error select values:", error);
             res.status(500).json(error);
             return;
         }
-        res.status(201).json({ massage: "登録成功", data: req.body });
+        res.status(200).json({duplicateFlag: results.length > 0});
     });
 });
 

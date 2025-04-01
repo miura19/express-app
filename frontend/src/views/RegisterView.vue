@@ -6,6 +6,8 @@ import axios from "axios";
 const name = ref<string>("");
 const email = ref<string>("");
 const password = ref<string>("");
+const duplicateEmailFlag = ref<boolean>(false);
+const duplicateEmailMessage = ref<string>("メールアドレスが重複しています");
 
 const registUser = async () => {
 	console.log("register called");
@@ -21,13 +23,27 @@ const registUser = async () => {
 	}
 }
 
+const checkExistsEmail = async () => {
+	console.log("checkExistsEmail called");
+	try {
+		const response = await axios.get("http://localhost:3000/users/check-email", {
+			params: {email : email.value}
+		})		
+		console.log(response.data);
+		duplicateEmailFlag.value = response.data.duplicateFlag
+	} catch (error) {
+		console.error('❌ メール重複確認失敗' , error);
+	}
+	
+}
+
 const isinputDataDisabled = computed(() => {
 	return name.value === "" || email.value === "" || password.value === ""
 })
 
 const isinputDataBtnColor = computed(() => 
 	name.value === "" || email.value === "" || password.value === ""
-		? "bg-sky-600 transition-all duration-300"
+		? "bg-sky-700 transition-all duration-300"
 		: "bg-sky-400 transition-all duration-300"
 )
 
@@ -45,7 +61,8 @@ const isinputDataBtnColor = computed(() =>
 					</div>
 					<div class="mb-4">
 						<label for="email" class="block text-sm font-medium text-gray-700">メールアドレス</label>
-						<input v-model="email" type="email" id="email" name="email" placeholder="your@example.com" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+						<input v-model="email" @blur="checkExistsEmail" type="email" id="email" name="email" placeholder="your@example.com" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+						<p v-if="duplicateEmailFlag" class="mt-2 text-red-500">{{ duplicateEmailMessage }}</p>
 					</div>
 					<div class="mb-6 relative">
 						<label for="password" class="block text-sm font-medium text-gray-700">パスワード</label>
