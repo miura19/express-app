@@ -4,7 +4,6 @@ import { ref, onMounted } from 'vue';
 type User = {
 	id: number,
 	name: string,
-	age: number
 };
 const users_array = ref<User[]>([])
 const error_message = ref<string | null>(null)
