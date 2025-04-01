@@ -1,11 +1,36 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { RouterLink } from 'vue-router'
 import axios from "axios";
 
 const name = ref<string>("");
 const email = ref<string>("");
 const password = ref<string>("");
+
+const registUser = async () => {
+	console.log("register called");
+	try {
+		const response = await axios.post("http://localhost:3000/users", {
+			name: name.value,
+			email: email.value,
+			password: password.value
+		})		
+		console.log(response.data);
+	} catch (error) {
+		console.error('❌ 登録失敗' , error);
+	}
+}
+
+const isinputDataDisabled = computed(() => {
+	return name.value === "" || email.value === "" || password.value === ""
+})
+
+const isinputDataBtnColor = computed(() => 
+	name.value === "" || email.value === "" || password.value === ""
+		? "bg-sky-600 transition-all duration-300"
+		: "bg-sky-400 transition-all duration-300"
+)
+
 </script>
 
 <template>
@@ -13,22 +38,22 @@ const password = ref<string>("");
 		<div class="bg-gray-100 min-h-screen flex items-center justify-center">
 			<div class="bg-white p-8 rounded-lg shadow-lg w-2/5">
 				<h2 class="text-2xl font-bold mb-6 text-center text-gray-800">ユーザー登録</h2>
-				<form action="#" method="POST">
+				<form action="#" method="POST" @submit.prevent="registUser">
 					<div class="mb-4">
 						<label for="text" class="block text-sm font-medium text-gray-700">名前</label>
-						<input v-model="name" type="text" id="text" name="text" placeholder="田中太郎" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+						<input v-model="name" type="text" id="text" name="text" placeholder="田中太郎" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
 					</div>
 					<div class="mb-4">
 						<label for="email" class="block text-sm font-medium text-gray-700">メールアドレス</label>
-						<input v-model="email" type="email" id="email" name="email" placeholder="your@example.com" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+						<input v-model="email" type="email" id="email" name="email" placeholder="your@example.com" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
 					</div>
 					<div class="mb-6 relative">
 						<label for="password" class="block text-sm font-medium text-gray-700">パスワード</label>
 						<div class="relative">
-							<input v-model="password" type="password" id="password" name="password" placeholder="••••••••" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+							<input v-model="password" type="password" id="password" name="password" placeholder="••••••••" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
 						</div>
 					</div>
-					<button type="submit" class="w-full bg-sky-500 text-white py-2 px-4 rounded-md shadow hover:bg-sky-600">
+					<button type="submit" :disabled="isinputDataDisabled" :class="isinputDataBtnColor" class="w-full text-white py-2 px-4 rounded-md shadow">
 						登録
 					</button>
 				</form>
