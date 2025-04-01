@@ -15,6 +15,19 @@ router.get("/", (req, res) => {
     });
 });
 
+router.post("/", (req, res) => {
+    const con = getConnection()
+    const query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+    con.query(query, [req.body.name, req.body.email, req.body.password], (error) => {
+        if (error) {
+            console.error("Error insert values:", error);
+            res.status(500).json(error);
+            return;
+        }
+        res.status(201).json({ massage: "登録成功", data: req.body });
+    });
+});
+
 router.get("/check-email", (req, res) => {
     const con = getConnection()
     const email = req.query.email;

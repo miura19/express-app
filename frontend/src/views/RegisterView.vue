@@ -38,11 +38,11 @@ const checkExistsEmail = async () => {
 }
 
 const isinputDataDisabled = computed(() => {
-	return name.value === "" || email.value === "" || password.value === ""
+	return name.value === "" || email.value === "" || password.value === "" || duplicateEmailFlag.value
 })
 
 const isinputDataBtnColor = computed(() => 
-	name.value === "" || email.value === "" || password.value === ""
+	name.value === "" || email.value === "" || password.value === "" || duplicateEmailFlag.value
 		? "bg-sky-700 transition-all duration-300"
 		: "bg-sky-400 transition-all duration-300"
 )
