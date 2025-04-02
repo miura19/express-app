@@ -1,21 +1,34 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { RouterLink } from 'vue-router'
 import axios from "axios";
+import { useVuelidate } from "@vuelidate/core";
+import { email, required, minLength } from "@vuelidate/validators";
 
 const name = ref<string>("");
-const email = ref<string>("");
-const password = ref<string>("");
 const duplicateEmailFlag = ref<boolean>(false);
 const duplicateEmailMessage = ref<string>("メールアドレスが重複しています");
+
+const state = reactive({
+	email: "",
+	password: "",
+});
+
+const rules = {
+	email: { required, email },
+	password: { required, minLength: minLength(8) },
+};
+
+
+const v$ = useVuelidate(rules, state);
 
 const registUser = async () => {
 	console.log("register called");
 	try {
 		const response = await axios.post("http://localhost:3000/users", {
 			name: name.value,
-			email: email.value,
-			password: password.value
+			email: state.email,
+			password: state.password
 		})		
 		console.log(response.data);
 	} catch (error) {
@@ -27,7 +40,7 @@ const checkExistsEmail = async () => {
 	console.log("checkExistsEmail called");
 	try {
 		const response = await axios.get("http://localhost:3000/users/check-email", {
-			params: {email : email.value}
+			params: {email : state.email}
 		})		
 		console.log(response.data);
 		duplicateEmailFlag.value = response.data.duplicateFlag
@@ -38,11 +51,11 @@ const checkExistsEmail = async () => {
 }
 
 const isinputDataDisabled = computed(() => {
-	return name.value === "" || email.value === "" || password.value === "" || duplicateEmailFlag.value
+	return name.value === "" || state.email === "" || state.password === "" || duplicateEmailFlag.value || v$.value.$errors.length > 0
 })
 
 const isinputDataBtnColor = computed(() => 
-	name.value === "" || email.value === "" || password.value === "" || duplicateEmailFlag.value
+	name.value === "" || state.email === "" || state.password === "" || duplicateEmailFlag.value || v$.value.$errors.length > 0
 		? "bg-sky-700 transition-all duration-300"
 		: "bg-sky-400 transition-all duration-300"
 )
@@ -61,13 +74,15 @@ const isinputDataBtnColor = computed(() =>
 					</div>
 					<div class="mb-4">
 						<label for="email" class="block text-sm font-medium text-gray-700">メールアドレス</label>
-						<input v-model="email" @blur="checkExistsEmail" type="email" id="email" name="email" placeholder="your@example.com" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+						<input v-model="state.email" @blur="checkExistsEmail(); v$.email.$touch();" type="email" id="email" name="email" placeholder="your@example.com" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
 						<p v-if="duplicateEmailFlag" class="mt-2 text-red-500">{{ duplicateEmailMessage }}</p>
+						<p v-if="v$.email.$errors.length">{{ v$.email.$errors[0].$message }}</p>
 					</div>
 					<div class="mb-6 relative">
 						<label for="password" class="block text-sm font-medium text-gray-700">パスワード</label>
 						<div class="relative">
-							<input v-model="password" type="password" id="password" name="password" placeholder="••••••••" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+							<input v-model="state.password" @blur="v$.password.$touch();" type="password" minlength="8" maxlength="16" id="password" name="password" placeholder="••••••••" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+							<p v-if="v$.password.$errors.length">{{ v$.password.$errors[0].$message }}</p>
 						</div>
 					</div>
 					<button type="submit" :disabled="isinputDataDisabled" :class="isinputDataBtnColor" class="w-full text-white py-2 px-4 rounded-md shadow">
