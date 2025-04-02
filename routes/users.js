@@ -20,7 +20,7 @@ router.get("/", (req, res) => {
 const validator = [
     body('name').notEmpty().withMessage('名前は必須です'),
     body('email').isEmail().withMessage('正しいメールアドレスを入力してください'),
-    body('password').isLength({ min: 8 }).withMessage('8文字以上で入力してください')
+    body('password').isLength({ min: 8 }).withMessage('パスワードは8文字以上で入力してください')
 ]
 router.post("/", validator, async (req, res) => {
     const errors = validationResult(req);
@@ -28,16 +28,21 @@ router.post("/", validator, async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const con = getConnection()
-    const query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
-    con.query(query, [req.body.name, req.body.email, hashedPassword], (error) => {
-        if (error) {
-            console.error("Error insert values:", error);
-            res.status(500).json(error);
-            return;
-        }
-        res.status(201).json({ message: "登録成功",data: {name: req.body.name, email: req.body.email} });
-    });
+    try {
+        const con = getConnection()
+        const query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";                
+        con.query(query, [req.body.name, req.body.email, hashedPassword], (error) => {
+            if (error) {
+                console.error("Error insert values:", error);
+                res.status(500).json(error);
+                return;
+            }
+            res.status(201).json({ message: "登録成功", data: { name: req.body.name, email: req.body.email } });
+        });
+    } catch (error) {
+        console.error("❌サーバーエラー", error);
+        res.status(500).json({ error: "サーバーエラーが発生しました。しばらく時間をおいて再度お試しください。" });
+    }
 });
 
 router.get("/check-email", (req, res) => {

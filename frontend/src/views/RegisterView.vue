@@ -46,8 +46,8 @@ const registUser = async () => {
 			errors.value = error.response.data.errors
 			console.error('❌ 登録失敗' , error.response.data.errors);
 		} else {
-			console.error('❌ 登録失敗' , error);
-			alert("❌ 登録失敗しました")
+			console.error('❌ サーバーエラー' , error);
+			alert("❌ サーバーエラーが発生しました。しばらく時間をおいて再度お試しください")
 		}
 		
 	}
