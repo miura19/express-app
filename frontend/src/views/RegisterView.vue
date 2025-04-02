@@ -3,7 +3,8 @@ import { ref, reactive, computed } from 'vue';
 import { RouterLink } from 'vue-router'
 import axios from "axios";
 import { useVuelidate } from "@vuelidate/core";
-import { email, required, minLength } from "@vuelidate/validators";
+import { email, required, minLength, helpers } from "@vuelidate/validators";
+import { requiredMessage, emailMessage, minLengthMessage } from "../plugin/validatorMessage"
 
 const name = ref<string>("");
 const duplicateEmailFlag = ref<boolean>(false);
@@ -15,10 +16,18 @@ const state = reactive({
 });
 
 const rules = {
-	email: { required, email },
-	password: { required, minLength: minLength(8) },
+	email: {
+		required: helpers.withMessage(requiredMessage("メールアドレス"), required),
+		email: helpers.withMessage(emailMessage, email),
+	},
+	password: {
+		required: helpers.withMessage(requiredMessage("パスワード"), required),
+		minLengthValue: helpers.withMessage(
+			minLengthMessage("パスワード", 8),
+			minLength(8)
+		),
+	},
 };
-
 
 const v$ = useVuelidate(rules, state);
 
@@ -76,13 +85,13 @@ const isinputDataBtnColor = computed(() =>
 						<label for="email" class="block text-sm font-medium text-gray-700">メールアドレス</label>
 						<input v-model="state.email" @blur="checkExistsEmail(); v$.email.$touch();" type="email" id="email" name="email" placeholder="your@example.com" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
 						<p v-if="duplicateEmailFlag" class="mt-2 text-red-500">{{ duplicateEmailMessage }}</p>
-						<p v-if="v$.email.$errors.length">{{ v$.email.$errors[0].$message }}</p>
+						<p v-if="v$.email.$errors.length" class="mt-2 text-red-500">{{ v$.email.$errors[0].$message }}</p>
 					</div>
 					<div class="mb-6 relative">
 						<label for="password" class="block text-sm font-medium text-gray-700">パスワード</label>
 						<div class="relative">
 							<input v-model="state.password" @blur="v$.password.$touch();" type="password" minlength="8" maxlength="16" id="password" name="password" placeholder="••••••••" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
-							<p v-if="v$.password.$errors.length">{{ v$.password.$errors[0].$message }}</p>
+							<p v-if="v$.password.$errors.length" class="mt-2 text-red-500">{{ v$.password.$errors[0].$message }}</p>
 						</div>
 					</div>
 					<button type="submit" :disabled="isinputDataDisabled" :class="isinputDataBtnColor" class="w-full text-white py-2 px-4 rounded-md shadow">
