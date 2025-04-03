@@ -96,14 +96,14 @@ const isinputDataBtnColor = computed(() =>
 					</div>
 					<div class="mb-4">
 						<label for="email" class="block text-sm font-medium text-gray-700">メールアドレス</label>
-						<input v-model="state.email" @blur="checkExistsEmail(); v$.email.$touch();" type="email" id="email" name="email" placeholder="your@example.com" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+						<input v-model="state.email" @blur="checkExistsEmail(); v$.email.$touch();" type="email" id="email" name="email" placeholder="your@example.com" autocomplete="username" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
 						<p v-if="duplicateEmailFlag" class="mt-2 text-red-500">{{ duplicateEmailMessage }}</p>
 						<p v-if="v$.email.$errors.length" class="mt-2 text-red-500">{{ v$.email.$errors[0].$message }}</p>
 					</div>
 					<div class="mb-6 relative">
 						<label for="password" class="block text-sm font-medium text-gray-700">パスワード</label>
 						<div class="relative">
-							<input v-model="state.password" @input="v$.password.$touch();" type="password" minlength="8" maxlength="16" id="password" name="password" placeholder="••••••••" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+							<input v-model="state.password" @input="v$.password.$touch();" type="password" minlength="8" maxlength="16" id="password" name="password" placeholder="••••••••" autocomplete="off" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
 							<p v-if="v$.password.$errors.length" class="mt-2 text-red-500">{{ v$.password.$errors[0].$message }}</p>
 						</div>
 					</div>
