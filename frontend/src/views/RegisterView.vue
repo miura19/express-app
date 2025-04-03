@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter  } from 'vue-router'
 import axios from "axios";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required, minLength, helpers } from "@vuelidate/validators";
@@ -10,6 +10,8 @@ const name = ref<string>("");
 const duplicateEmailFlag = ref<boolean>(false);
 const duplicateEmailMessage = ref<string>("メールアドレスが重複しています");
 const errors = ref<any>([]);
+
+const router = useRouter();
 
 const state = reactive({
 	email: "",
@@ -41,6 +43,7 @@ const registUser = async () => {
 			password: state.password
 		})		
 		console.log(response.data);
+		router.push({ name:'login', state: {status: response.status} });
 	} catch (error: any) {
 		if (error.response.status === 400) {
 			errors.value = error.response.data.errors

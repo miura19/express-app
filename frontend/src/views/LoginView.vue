@@ -1,10 +1,31 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { RouterLink } from 'vue-router'
 import axios from "axios";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required, minLength, helpers } from "@vuelidate/validators";
 import { requiredMessage, emailMessage, minLengthMessage } from "../plugin/validatorMessage"
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+
+const status: number | null = window.history.state.status;
+console.log(status);
+
+const message = ref<string>("登録成功しました！"); // メッセージ用のリアクティブ変数
+const showMessage = ref<boolean>(false); // 表示・非表示の状態
+
+onMounted(() => {
+	if (window.history.state.status) {
+		showMessage.value = true;
+		// 3秒後にフェードアウト
+		setTimeout(() => {
+		showMessage.value = false;
+		// メッセージをクリア（URLをクリーンにする）
+		history.replaceState({}, "", "/login");
+		}, 3000);
+	}
+});
 
 const state = reactive({
 	email: "",
@@ -47,6 +68,9 @@ const isinputDataBtnColor = computed(() =>
 	<main>
 		<div class="bg-gray-100 min-h-screen flex items-center justify-center">
 			<div class="bg-white p-8 rounded-lg shadow-lg w-2/5">
+				<transition name="fade">
+					<span class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white" v-if="showMessage">{{ message }}</span>
+				</transition>
 				<h2 class="text-2xl font-bold mb-6 text-center text-gray-800">ログイン</h2>
 				<form action="#" method="POST" @submit.prevent="login">
 					<div class="mb-4">
@@ -70,3 +94,13 @@ const isinputDataBtnColor = computed(() =>
 		</div>
 	</main>
 </template>
+
+<style scoped>
+	.fade-enter-active, .fade-leave-active {
+	transition: opacity 1s ease;
+	}
+
+	.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+	opacity: 0;
+	}
+</style>
