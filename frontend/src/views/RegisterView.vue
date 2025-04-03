@@ -103,16 +103,13 @@ const isinputDataBtnColor = computed(() =>
 					<div class="mb-6 relative">
 						<label for="password" class="block text-sm font-medium text-gray-700">パスワード</label>
 						<div class="relative">
-							<input v-model="state.password" @blur="v$.password.$touch();" type="password" minlength="8" maxlength="16" id="password" name="password" placeholder="••••••••" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
+							<input v-model="state.password" @input="v$.password.$touch();" type="password" minlength="8" maxlength="16" id="password" name="password" placeholder="••••••••" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm">
 							<p v-if="v$.password.$errors.length" class="mt-2 text-red-500">{{ v$.password.$errors[0].$message }}</p>
 						</div>
 					</div>
-					<button type="submit" :class="isinputDataBtnColor" class="w-full text-white py-2 px-4 rounded-md shadow">
+					<button type="submit" :disabled="isinputDataDisabled" :class="isinputDataBtnColor" class="w-full text-white py-2 px-4 rounded-md shadow">
 						登録
 					</button>
-					<!-- <button type="submit" :disabled="isinputDataDisabled" :class="isinputDataBtnColor" class="w-full text-white py-2 px-4 rounded-md shadow">
-						登録
-					</button> -->
 				</form>
 				<p class="mt-4 text-cyan-800 underline"><RouterLink to="/login">登録済みの方はこちらからログイン</RouterLink></p>
 			</div>
