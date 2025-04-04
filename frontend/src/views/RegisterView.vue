@@ -37,7 +37,7 @@ const v$ = useVuelidate(rules, state);
 const registUser = async () => {
 	console.log("register called");
 	try {
-		const response = await axios.post("http://localhost:3000/users", {
+		const response = await axios.post("http://localhost:3000/users/register", {
 			name: name.value,
 			email: state.email,
 			password: state.password

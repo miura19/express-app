@@ -22,7 +22,7 @@ const validator = [
     body('email').isEmail().withMessage('正しいメールアドレスを入力してください'),
     body('password').isLength({ min: 8 }).withMessage('パスワードは8文字以上で入力してください')
 ]
-router.post("/", validator, async (req, res) => {
+router.post("/register", validator, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
