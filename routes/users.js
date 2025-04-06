@@ -3,6 +3,7 @@ const router = express.Router();
 const { getConnection } = require('../db');
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
+const JWT = require("jsonwebtoken");
 
 router.get("/", (req, res) => {
     const con = getConnection()
@@ -45,8 +46,34 @@ router.post("/register", validator, async (req, res) => {
     }
 });
 
+router.post("/login", (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const con = getConnection();
+        const query = "SELECT * FROM users WHERE email = ?";
+        con.query(query, [email], async (error, results) => {
+            if (error) {
+                console.error("Error select values:", error);
+                res.status(500).json(error);
+                return;
+            }
+            if (!results[0]) {
+                res.status(200).json({ message: "そのユーザーは存在しません" });
+                return
+            }
+            const isMatch = await bcrypt.compare(password, results[0].password)
+            console.log(isMatch);
+            
+            res.status(200).json({ results });
+        });
+    } catch (error) {
+        console.error("❌サーバーエラー", error);
+        res.status(500).json({ error: "サーバーエラーが発生しました。しばらく時間をおいて再度お試しください。" });
+    }
+})
+
 router.get("/check-email", (req, res) => {
-    const con = getConnection()
+    const con = getConnection();
     const email = req.query.email;
     const query = "SELECT * FROM users WHERE email = ?";
     con.query(query, [email], (error, results) => {
