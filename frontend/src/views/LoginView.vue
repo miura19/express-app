@@ -5,7 +5,6 @@ import axios from "axios";
 import { useVuelidate } from "@vuelidate/core";
 import { email, required, minLength, helpers } from "@vuelidate/validators";
 import { requiredMessage, emailMessage, minLengthMessage } from "../plugin/validatorMessage"
-import { useRoute } from "vue-router";
 
 const router = useRouter();
 const errors = ref<any>([]);
@@ -57,6 +56,7 @@ const login = async () => {
 			password: state.password
 		})		
 		console.log(response.data);
+		document.cookie = `token=${response.data.token}; path=/; max-age=86400`;
 		router.push({ name:'home', state: {status: response.status} });
 	} catch (error: any) {
 		if (error.response.status === 401) {
@@ -68,7 +68,6 @@ const login = async () => {
 		}
 		
 	}
-	
 }
 const isinputDataDisabled = computed(() => {
 	return state.email === "" || state.password === "" || v$.value.$errors.length > 0
