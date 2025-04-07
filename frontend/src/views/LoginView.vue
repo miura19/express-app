@@ -10,9 +10,7 @@ const router = useRouter();
 const errors = ref<any>([]);
 
 const status: number | null = window.history.state.status;
-console.log(status);
-
-const message = ref<string>("ログイン成功しました！"); // メッセージ用のリアクティブ変数
+const message = ref<string>("登録成功しました！"); // メッセージ用のリアクティブ変数
 const showMessage = ref<boolean>(false); // 表示・非表示の状態
 
 onMounted(() => {
@@ -98,7 +96,7 @@ watch(() => state.password, (newVal) => {
 		<div class="bg-gray-100 min-h-screen flex items-center justify-center">
 			<div class="bg-white p-8 rounded-lg shadow-lg w-2/5">
 				<transition name="fade">
-					<span class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white" v-if="showMessage">{{ message }}</span>
+					<div class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white text-center mb-4" v-if="showMessage">{{ message }}</div>
 				</transition>
 				<h2 class="text-2xl font-bold mb-6 text-center text-gray-800">ログイン</h2>
 				<form action="#" method="POST" @submit.prevent="login">
