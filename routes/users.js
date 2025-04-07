@@ -58,13 +58,14 @@ router.post("/login", (req, res) => {
                 return;
             }
             if (!results[0]) {
-                res.status(200).json({ message: "そのユーザーは存在しません" });
+                res.status(401).json({ message: "そのユーザーは存在しません", errorFlg: 0});
                 return
             }
             const isMatch = await bcrypt.compare(password, results[0].password)
-            console.log(isMatch);
-            
-            res.status(200).json({ results });
+            if (!isMatch) {
+                return res.status(401).json({ message : "パスワードに誤りがあります", errorFlg: 1});
+            }
+            res.status(200).json({ message: "ログイン成功", user: { name: results[0].name,email: results[0].email }});
         });
     } catch (error) {
         console.error("❌サーバーエラー", error);
