@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import axios from "axios";
+import { RouterLink, useRouter } from 'vue-router'
+
+const router = useRouter();
 
 type User = {
 	id: number,
 	name: string,
+	email: string,
+	created_at: Date,
+	updated_at: Date,
 };
 const users_array = ref<User[]>([])
 const error_message = ref<string | null>(null)
@@ -17,11 +23,12 @@ onMounted(() => {
 		showMessage.value = true;
 		// 3秒後にフェードアウト
 		setTimeout(() => {
-		showMessage.value = false;
-		// メッセージをクリア（URLをクリーンにする）
-		history.replaceState({}, "", "/home");
+			showMessage.value = false;
+			// メッセージをクリア（URLをクリーンにする）
+			history.replaceState({}, "", "/home");
 		}, 3000);
 	}
+	getAllUsers()
 });
 
 const getAllUsers = async () => {
@@ -42,32 +49,74 @@ const getAllUsers = async () => {
 	}
 }
 
-onMounted(() => {
-	getAllUsers()
-})
-
+const logout = () => {
+	console.log("logout called");
+	document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+	router.push({ name: 'login' });
+}
 
 </script>
 
 <template>
 	<main>
-		<h2 v-if="error_message">{{ error_message }}</h2>
-		<h2 v-else>ユーザ一覧</h2>
-		<transition name="fade">
-			<span class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white" v-if="showMessage">{{ message }}</span>
-		</transition>
-		<ul>
-			<li v-for="user in users_array" :key="user.id">{{ user.name }}</li>
-		</ul>
+		<section class="text-gray-600 body-font">
+			<transition name="fade">
+				<span class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white" v-if="showMessage">{{ message }}</span>
+			</transition>
+			<div class="container mx-auto">
+				<div class="mt-8"><button @click="logout" class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white hover:bg-sky-400 transition-all duration-200">ログアウト</button></div>
+				<div class="flex flex-col text-center w-full mb-12">
+					<div v-if="error_message">{{ error_message }}</div>
+					<div v-else class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">ユーザ一覧</div>
+				</div>
+				<div v-if="!error_message" class="lg:w-2/3 w-full mx-auto overflow-auto">
+					<table class="table-auto w-full text-left whitespace-no-wrap">
+						<thead>
+							<tr>
+								<th
+									class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">
+									Id</th>
+								<th
+									class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">
+									Name</th>
+								<th
+									class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">
+									Email</th>
+								<th
+									class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">
+									Created_at</th>
+								<th
+									class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">
+									Updated_at</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="user in users_array" :key="user.id">
+								<td class="px-4 py-3 text-center">{{ user.id }}</td>
+								<td class="px-4 py-3 text-center">{{ user.name }}</td>
+								<td class="px-4 py-3 text-center">{{ user.email }}</td>
+								<td class="px-4 py-3 text-center">{{ user.created_at }}</td>
+								<td class="px-4 py-3 text-center">{{ user.updated_at }}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</section>
 	</main>
 </template>
 
 <style scoped>
-	.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
 	transition: opacity 1s ease;
-	}
+}
 
-	.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+.fade-enter,
+.fade-leave-to
+
+/* .fade-leave-active in <2.1.8 */
+	{
 	opacity: 0;
-	}
+}
 </style>
