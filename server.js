@@ -25,4 +25,24 @@ app.get('/', (req, res) => {
     res.send('Hello from Express for Express!!!!!!!!!!');
 });
 
+const path = require('path');
+
+// 本番環境（EC2）のみ静的ファイルをサーブ
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, 'frontend/dist')));
+
+    // どのURLでも index.html を返す
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'frontend/dist/index.html'), (err) => {
+            if (err) {
+                res.status(500).send('Error loading index.html');
+            }
+        });
+    });
+} else {
+    // 開発環境の場合は、npm run devで動かす
+    // ここでVue.jsの開発サーバーをプロキシする設定などを追加できます
+    console.log('Development environment: Running Vue.js with npm run dev');
+}
+
 app.use("/users", userRouter);
