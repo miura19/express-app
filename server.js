@@ -11,7 +11,8 @@ app.use(cookieParser())
 app.use(express.json()) //jsonのリクエスト/レスポンスを正しく受け取る為に必要
 
 const corsOptions = {
-    origin: 'http://localhost:5173',  // フロントエンドのURLを指定
+    // origin: 'http://localhost:5173',  // フロントエンドのURLを指定
+    origin: process.env.NODE_ENV === 'production' ? 'http://54.199.1.39:3000' : 'http://localhost:5173',  // 本番環境ではEC2 IP、開発環境ではlocalhost
     credentials: true,  // クッキーを含める設定
 };
 app.use(cors(corsOptions)) // corsを有効にする
