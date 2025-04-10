@@ -46,10 +46,12 @@ const rules = {
 
 const v$ = useVuelidate(rules, state);
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const login = async () => {
 	console.log("login called");
 	try {
-		const response = await axios.post("http://localhost:3000/users/login", {
+		const response = await axios.post(`${apiUrl}/users/login`, {
 			email: state.email,
 			password: state.password
 		})		

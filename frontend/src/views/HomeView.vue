@@ -31,9 +31,11 @@ onMounted(() => {
 	getAllUsers()
 });
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const getAllUsers = async () => {
 	try {
-		const fetch_data = await axios.get('http://localhost:3000/users', {
+		const fetch_data = await axios.get(`${apiUrl}/users`, {
 			withCredentials: true
 		});
 		if (fetch_data.status !== 200) {
