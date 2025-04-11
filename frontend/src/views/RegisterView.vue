@@ -39,7 +39,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const registUser = async () => {
 	console.log("register called");
 	try {
-		const response = await axios.post(`${apiUrl}/users/register`, {
+		const response = await axios.post("http://54.199.1.39:3000/api/users/register", {
 			name: name.value,
 			email: state.email,
 			password: state.password
@@ -61,9 +61,9 @@ const registUser = async () => {
 const checkExistsEmail = async () => {
 	console.log("checkExistsEmail called");
 	try {
-		const response = await axios.get(`${apiUrl}/users/check-email`, {
-			params: { email: state.email }
-		})
+		const response = await axios.get("http://54.199.1.39:3000/api/users/check-email", {
+			params: {email : state.email}
+		})		
 		console.log(response.data);
 		duplicateEmailFlag.value = response.data.duplicateFlag
 	} catch (error) {

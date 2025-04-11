@@ -35,7 +35,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 const getAllUsers = async () => {
 	try {
-		const fetch_data = await axios.get(`${apiUrl}/users`, {
+		const fetch_data = await axios.get('http://54.199.1.39:3000/api/users', {
 			withCredentials: true
 		});
 		if (fetch_data.status !== 200) {

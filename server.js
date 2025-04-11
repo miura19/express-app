@@ -12,7 +12,7 @@ app.use(express.json()) //jsonのリクエスト/レスポンスを正しく受�
 
 const corsOptions = {
     // origin: 'http://localhost:5173',  // フロントエンドのURLを指定
-    origin: process.env.NODE_ENV === 'production' ? 'http://54.199.1.39:3000' : 'http://localhost:5173',  // 本番環境ではEC2 IP、開発環境ではlocalhost
+    origin: 'http://54.199.1.39:3000',  // 本番環境ではEC2 IP、開発環境ではlocalhost
     credentials: true,  // クッキーを含める設定
 };
 app.use(cors(corsOptions)) // corsを有効にする
@@ -27,6 +27,7 @@ app.get('/', (req, res) => {
 });
 
 const path = require('path');
+app.use('/api/users', userRouter); // 例：ユーザー取得API
 
 // 本番環境（EC2）のみ静的ファイルをサーブ
 if (process.env.NODE_ENV === 'production') {
@@ -45,5 +46,3 @@ if (process.env.NODE_ENV === 'production') {
     // ここでVue.jsの開発サーバーをプロキシする設定などを追加できます
     console.log('Development environment: Running Vue.js with npm run dev');
 }
-
-app.use("/users", userRouter);
