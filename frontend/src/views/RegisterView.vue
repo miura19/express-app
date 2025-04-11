@@ -34,12 +34,10 @@ const rules = {
 
 const v$ = useVuelidate(rules, state);
 
-const apiUrl = import.meta.env.VITE_API_URL;
-
 const registUser = async () => {
 	console.log("register called");
 	try {
-		const response = await axios.post("http://54.199.1.39:3000/api/users/register", {
+		const response = await axios.post(import.meta.env.VITE_API_URL + "/api/users/register", {
 			name: name.value,
 			email: state.email,
 			password: state.password
@@ -61,7 +59,7 @@ const registUser = async () => {
 const checkExistsEmail = async () => {
 	console.log("checkExistsEmail called");
 	try {
-		const response = await axios.get("http://54.199.1.39:3000/api/users/check-email", {
+		const response = await axios.get(import.meta.env.VITE_API_URL + "/api/users/check-email", {
 			params: {email : state.email}
 		})		
 		console.log(response.data);

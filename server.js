@@ -6,13 +6,13 @@ dotenv.config();
 const cookieParser = require('cookie-parser')
 const app = express();
 const port = process.env.EXPRESS_PORT;
+const frontend_url = process.env.FRONTEND_URL
 
 app.use(cookieParser())
 app.use(express.json()) //jsonのリクエスト/レスポンスを正しく受け取る為に必要
 
 const corsOptions = {
-    // origin: 'http://localhost:5173',  // フロントエンドのURLを指定
-    origin: 'http://54.199.1.39:3000',  // 本番環境ではEC2 IP、開発環境ではlocalhost
+    origin: frontend_url,  // 本番環境ではEC2 IP、開発環境ではlocalhost
     credentials: true,  // クッキーを含める設定
 };
 app.use(cors(corsOptions)) // corsを有効にする

@@ -51,7 +51,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const login = async () => {
 	console.log("login called");
 	try {
-		const response = await axios.post("http://54.199.1.39:3000/api/users/login", {
+		const response = await axios.post(import.meta.env.VITE_API_URL + "/api/users/login", {
 			email: state.email,
 			password: state.password
 		})		
