@@ -49,7 +49,7 @@ const v$ = useVuelidate(rules, state);
 const login = async () => {
 	console.log("login called");
 	try {
-		const response = await axios.post("http://localhost:3000/users/login", {
+		const response = await axios.post("http://54.199.1.39:3000/api/users/login", {
 			email: state.email,
 			password: state.password
 		})		
