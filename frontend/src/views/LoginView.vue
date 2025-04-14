@@ -46,8 +46,6 @@ const rules = {
 
 const v$ = useVuelidate(rules, state);
 
-const apiUrl = import.meta.env.VITE_API_URL;
-
 const login = async () => {
 	console.log("login called");
 	try {

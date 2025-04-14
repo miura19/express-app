@@ -2,6 +2,12 @@
 import { ref, onMounted } from 'vue';
 import axios from "axios";
 import { RouterLink, useRouter } from 'vue-router'
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const router = useRouter();
 
@@ -9,8 +15,8 @@ type User = {
 	id: number,
 	name: string,
 	email: string,
-	created_at: Date,
-	updated_at: Date,
+	created_at: string,
+	updated_at: string,
 };
 const users_array = ref<User[]>([])
 const error_message = ref<string | null>(null)
@@ -31,7 +37,10 @@ onMounted(() => {
 	getAllUsers()
 });
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const formated_date = (dateString: string) => {
+  	return dayjs.utc(dateString)            // UTCとして解釈
+			.format("YYYY/MM/DD HH:mm:ss");  // 希望のフォーマットで表示
+};
 
 const getAllUsers = async () => {
 	try {
@@ -97,8 +106,8 @@ const logout = () => {
 								<td class="px-4 py-3 text-center">{{ user.id }}</td>
 								<td class="px-4 py-3 text-center">{{ user.name }}</td>
 								<td class="px-4 py-3 text-center">{{ user.email }}</td>
-								<td class="px-4 py-3 text-center">{{ user.created_at }}</td>
-								<td class="px-4 py-3 text-center">{{ user.updated_at }}</td>
+								<td class="px-4 py-3 text-center">{{ formated_date(user.created_at) }}</td>
+								<td class="px-4 py-3 text-center">{{ formated_date(user.updated_at) }}</td>
 							</tr>
 						</tbody>
 					</table>
