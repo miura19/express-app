@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { getConnection } = require('../db');
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const JWT = require("jsonwebtoken");
+const { PrismaClient } = require('../generated/prisma');
+const prisma = new PrismaClient();
 
 const verifyToken = (req, res, next) => {
     const token = req.cookies.token;
     if (!token) return res.status(401).json({ message: "トークンがありません" });
-
     try {
         const decoded = JWT.verify(token, process.env.TOKEN_SECRET);
         req.user = decoded; // あとで使いたければ
@@ -18,17 +18,18 @@ const verifyToken = (req, res, next) => {
     }
 };
 
-router.get("/", verifyToken, (req, res) => {
-    const con = getConnection()
-    const query = "SELECT * FROM users";
-    con.query(query, (error, results) => {
-        if (error) {
-            console.error("Error select values:", error);
-            res.status(500).json(error);
-            return;
+router.get("/", verifyToken, async (req, res) => {
+    try {
+        const users = await prisma.users.findMany();
+        if (users.length === 0) {
+            return res.status(404).json({ message: "ユーザーが見つかりませんでした。" });
         }
-        res.status(200).json(results);
-    });
+        res.status(200).json(users);
+    } catch (error) {
+        console.error("Error select values:", error);
+        res.status(500).json({ message: "サーバーエラーが発生しました。" });
+        return;
+    }
 });
 
 const validator = [
@@ -43,71 +44,65 @@ router.post("/register", validator, async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     try {
-        const con = getConnection()
-        const query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
-        con.query(query, [req.body.name, req.body.email, hashedPassword], (error) => {
-            if (error) {
-                console.error("Error insert values:", error);
-                res.status(500).json(error);
-                return;
-            }
-            res.status(201).json({ message: "登録成功", data: { name: req.body.name, email: req.body.email } });
+        const user = await prisma.users.create({
+            data: {
+                name: req.body.name,
+                email: req.body.email,
+                password: hashedPassword,
+            },
         });
+        res.status(201).json({ message: "登録成功", data: { name: user.name, email: user.email } });
     } catch (error) {
-        console.error("❌サーバーエラー", error);
+        console.error("Error insert values:", error);
         res.status(500).json({ error: "サーバーエラーが発生しました。しばらく時間をおいて再度お試しください。" });
     }
 });
 
-const generateAccessToken = (results) => {
+const generateAccessToken = (user) => {
     const payload = {
-        id: results[0].id,
-        name: results[0].name,
-        email: results[0].email,
+        id: user.id,
+        name: user.name,
+        email: user.email,
     };
     return JWT.sign(payload, process.env.TOKEN_SECRET, { expiresIn: '1d' });
 };
 
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
     const { email, password } = req.body;
     try {
-        const con = getConnection();
-        const query = "SELECT * FROM users WHERE email = ?";
-        con.query(query, [email], async (error, results) => {
-            if (error) {
-                console.error("Error select values:", error);
-                res.status(500).json(error);
-                return;
-            }
-            if (!results[0]) {
-                res.status(401).json({ message: "そのユーザーは存在しません", errorFlg: 0 });
-                return
-            }
-            const isMatch = await bcrypt.compare(password, results[0].password)
-            if (!isMatch) {
-                return res.status(401).json({ message: "パスワードに誤りがあります", errorFlg: 1 });
-            }
-            res.status(200).json({ message: "ログイン成功", user: { name: results[0].name, email: results[0].email }, token: generateAccessToken(results) });
+        const user = await prisma.users.findUnique({
+            where: { email: email },
         });
+        if (!user) {
+            return res.status(401).json({ message: "そのユーザーは存在しません", errorFlg: 0 });
+        }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "パスワードに誤りがあります", errorFlg: 1 });
+        }
+        const token = generateAccessToken(user);
+        res.status(200).json({ message: "ログイン成功", user: { name: user.name, email: user.email }, token });
     } catch (error) {
         console.error("❌サーバーエラー", error);
         res.status(500).json({ error: "サーバーエラーが発生しました。しばらく時間をおいて再度お試しください。" });
     }
 })
 
-router.get("/check-email", (req, res) => {
-    const con = getConnection();
+router.get("/check-email", async (req, res) => {
     const email = req.query.email;
-    const query = "SELECT * FROM users WHERE email = ?";
-    con.query(query, [email], (error, results) => {
-        if (error) {
-            console.error("Error select values:", error);
-            res.status(500).json(error);
-            return;
+    try {
+        const user = await prisma.users.findUnique({
+            where: { email: email, },
+        });
+        if (user) {
+            res.status(200).json({ duplicateFlag: true });
+        } else {
+            res.status(200).json({ duplicateFlag: false });
         }
-        res.status(200).json({ duplicateFlag: results.length > 0 });
-    });
+    } catch (error) {
+        console.error("Error select values:", error);
+        res.status(500).json(error);
+    }
 });
-
 
 module.exports = router;

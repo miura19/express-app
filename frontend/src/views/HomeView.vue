@@ -38,8 +38,8 @@ onMounted(() => {
 });
 
 const formated_date = (dateString: string) => {
-  	return dayjs.utc(dateString)            // UTCとして解釈
-			.format("YYYY/MM/DD HH:mm:ss");  // 希望のフォーマットで表示
+	return dayjs.utc(dateString)            // UTCとして解釈
+		.format("YYYY/MM/DD HH:mm:ss");  // 希望のフォーマットで表示
 };
 
 const getAllUsers = async () => {
@@ -72,10 +72,13 @@ const logout = () => {
 	<main>
 		<section class="text-gray-600 body-font">
 			<transition name="fade">
-				<span class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white" v-if="showMessage">{{ message }}</span>
+				<span class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white" v-if="showMessage">{{ message
+					}}</span>
 			</transition>
 			<div class="container mx-auto">
-				<div class="mt-8"><button @click="logout" class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white hover:bg-sky-400 transition-all duration-200">ログアウト</button></div>
+				<div class="mt-8"><button @click="logout"
+						class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white hover:bg-sky-400 transition-all duration-200">ログアウト</button>
+				</div>
 				<div class="flex flex-col text-center w-full mb-12">
 					<div v-if="error_message">{{ error_message }}</div>
 					<div v-else class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">ユーザ一覧</div>
