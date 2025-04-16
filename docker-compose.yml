@@ -5,6 +5,7 @@ services:
       dockerfile: docker/app/Dockerfile  # Dockerfile のパスを明示的に指定
     ports:
       - "3000:3000"
+      - "5555:5555"  # Prisma Studio 用 ←これ追加
     volumes:
       - "/app/node_modules" # ←追加
       - .:/app
