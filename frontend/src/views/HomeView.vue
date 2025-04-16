@@ -71,49 +71,48 @@ const logout = () => {
 <template>
 	<main>
 		<section class="text-gray-600 body-font">
-			<transition name="fade">
-				<span class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white" v-if="showMessage">{{ message
-					}}</span>
-			</transition>
-			<div class="container mx-auto">
-				<div class="mt-8"><button @click="logout"
-						class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white hover:bg-sky-400 transition-all duration-200">ログアウト</button>
+			<div class="container mx-auto w-full">
+				<div class="p-6">
+					<span class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white" v-if="showMessage">{{ message}}</span>
+					<button @click="logout" v-else class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white hover:bg-sky-400 transition-all duration-200">ログアウト</button>
 				</div>
 				<div class="flex flex-col text-center w-full mb-12">
 					<div v-if="error_message">{{ error_message }}</div>
 					<div v-else class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">ユーザ一覧</div>
 				</div>
-				<div v-if="!error_message" class="lg:w-2/3 w-full mx-auto overflow-auto">
-					<table class="table-auto w-full text-left whitespace-no-wrap">
-						<thead>
-							<tr>
-								<th
-									class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">
-									Id</th>
-								<th
-									class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">
-									Name</th>
-								<th
-									class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">
-									Email</th>
-								<th
-									class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">
-									Created_at</th>
-								<th
-									class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">
-									Updated_at</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr v-for="user in users_array" :key="user.id">
-								<td class="px-4 py-3 text-center">{{ user.id }}</td>
-								<td class="px-4 py-3 text-center">{{ user.name }}</td>
-								<td class="px-4 py-3 text-center">{{ user.email }}</td>
-								<td class="px-4 py-3 text-center">{{ formated_date(user.created_at) }}</td>
-								<td class="px-4 py-3 text-center">{{ formated_date(user.updated_at) }}</td>
-							</tr>
-						</tbody>
-					</table>
+				<div v-if="!error_message" class="w-full mx-auto overflow-x-auto">
+					<div class="hidden md:block overflow-x-auto">
+						<table class="table-auto w-full text-left whitespace-no-wrap min-w-[640px]">
+							<thead>
+								<tr>
+									<th class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">Id</th>
+									<th class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Name</th>
+									<th class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Email</th>
+									<th class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Created_at</th>
+									<th class="text-center px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Updated_at</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="user in users_array" :key="user.id">
+									<td class="px-4 py-3 text-center">{{ user.id }}</td>
+									<td class="px-4 py-3 text-center">{{ user.name }}</td>
+									<td class="px-4 py-3 text-center">{{ user.email }}</td>
+									<td class="px-4 py-3 text-center">{{ formated_date(user.created_at) }}</td>
+									<td class="px-4 py-3 text-center">{{ formated_date(user.updated_at) }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<!-- スマホ向け：縦型カード表示 -->
+					<div class="block md:hidden space-y-4 p-3">
+						<div v-for="user in users_array" :key="user.id" class="p-4 border rounded shadow-sm">
+							<p><span class="font-semibold">Id:</span> {{ user.id }}</p>
+							<p><span class="font-semibold">Name:</span> {{ user.name }}</p>
+							<p><span class="font-semibold">Email:</span> {{ user.email }}</p>
+							<p><span class="font-semibold">Created_at:</span> {{ formated_date(user.created_at) }}</p>
+							<p><span class="font-semibold">Updated_at:</span> {{ formated_date(user.updated_at) }}</p>
+						</div>
+					</div>
 				</div>
 			</div>
 		</section>

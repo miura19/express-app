@@ -94,7 +94,7 @@ watch(() => state.password, (newVal) => {
 <template>
 	<main>
 		<div class="bg-gray-100 min-h-screen flex items-center justify-center">
-			<div class="bg-white p-8 rounded-lg shadow-lg w-2/5">
+			<div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
 				<transition name="fade">
 					<div class="text-lg font-medium p-4 bg-sky-600 rounded-md text-white text-center mb-4" v-if="showMessage">{{ message }}</div>
 				</transition>
@@ -114,9 +114,7 @@ watch(() => state.password, (newVal) => {
 							<div v-if="errors.errorFlg === 1" class="mt-2 text-red-500">{{ errors.message }}</div>
 						</div>
 					</div>
-					<button type="submit" :disabled="isinputDataDisabled" :class="isinputDataBtnColor" class="w-full text-white py-2 px-4 rounded-md shadow">
-						ログイン
-					</button>
+					<button type="submit" :disabled="isinputDataDisabled" :class="isinputDataBtnColor" class="w-full text-white py-2 px-4 rounded-md shadow">ログイン</button>
 				</form>
 				<p class="mt-4 text-cyan-800 underline"><RouterLink to="/register">新規ユーザー登録はこちら</RouterLink></p>
 			</div>
